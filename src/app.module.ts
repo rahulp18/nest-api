@@ -6,11 +6,13 @@ import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './common/gaurds/auth.gaurd';
+import { PostsModule } from './posts/post.module';
 
 @Module({
   imports: [
     CoreModule,
     UserModule,
+    PostsModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

@@ -15,20 +15,8 @@ import {
 import { LoginUserDto } from './dto/login-user.dto';
 import { ExpressRequestWithUser } from './interfaces/express-request-with-user.interface';
 import { Public } from 'src/common/decorators/public.decorator';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { IsMineGuard } from 'src/common/gaurds/is-mine.guard';
 
-@Injectable()
-export class IsMineGuard implements CanActivate {
-  constructor() {}
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-
-    // 💡 We can access the user payload from the request object
-    // because we assigned it in the AuthGuard
-    return parseInt(request.params.id) === request.user.sub;
-  }
-}
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
