@@ -8,6 +8,12 @@ import { PrismaService } from 'src/core/services/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Post } from '@prisma/client';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { QueryPaginationDto } from './dto/query-pagination.dto';
+import {
+  PaginateOutput,
+  paginate,
+  paginateOutput,
+} from 'src/common/utils/pagination.utils';
 
 @Injectable()
 export class PostsService {
@@ -32,9 +38,15 @@ export class PostsService {
       throw new HttpException(error, 500);
     }
   }
-  async getAllPosts(): Promise<Post[]> {
-    const posts = await this.prisma.post.findMany();
-    return posts;
+  async getAllPosts(query?: QueryPaginationDto): Promise<PaginateOutput<Post>> {
+    const [posts, total] = await Promise.all([
+      await this.prisma.post.findMany({
+        ...paginate(query),
+      }),
+      await this.prisma.post.count(),
+    ]);
+
+    return paginateOutput<Post>(posts, total, query);
   }
   async getPostsById(id: number): Promise<Post> {
     try {
